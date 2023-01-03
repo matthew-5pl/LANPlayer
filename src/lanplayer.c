@@ -36,7 +36,6 @@ card_data read_server_data(char* server) {
     strcat(server_t, "/info");
     char* response_string;
     CURL* c = curl_easy_init();
-    curl_easy_setopt(c, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(c, CURLOPT_MAXREDIRS, 3L);
     curl_easy_setopt(c, CURLOPT_URL, server_t);
     curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, cbk);
@@ -48,7 +47,7 @@ card_data read_server_data(char* server) {
 
     card_data d;
 
-    printf("%ld", http_code);
+    printf("%ld ", http_code);
 
     if (http_code != 200 || curl_code == CURLE_ABORTED_BY_CALLBACK)
     {
@@ -63,7 +62,7 @@ card_data read_server_data(char* server) {
         d.online_players = o->valueint;
         d.idle_players = i->valueint;
         d.server = server;
-    } else {}
+    }
 
     curl_easy_cleanup(c);
 

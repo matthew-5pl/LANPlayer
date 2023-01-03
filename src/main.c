@@ -14,13 +14,14 @@ int main(int argc, char** argv) {
     printf("fetching servers, please wait....\n");
     for(int i = 0; i < s; i++) {
         datas[i] = read_server_data(f[i]);
-        printf("%s OK...", datas[i].server);
+        printf("%s OK...\n", datas[i].server);
     }
 
     SDL_Window* w = SDL_CreateWindow("LANPlayer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 720, 420, 0);
     SDL_Renderer* r = SDL_CreateRenderer(w, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     SDL_Event ev;
     
+    IMG_Init(IMG_INIT_PNG);
 
     TTF_Init();
 
@@ -30,11 +31,16 @@ int main(int argc, char** argv) {
 
     SDL_Color black = {0,0,0};
 
-    int x = 10, y = 10;
+    int x = 10, y = 60;
 
     SDL_Rect rects[s];
     SDL_Rect mouse;
     SDL_Rect ra;
+
+    SDL_Surface* logoTemp = IMG_Load("logo.png");
+    SDL_Texture* logo = SDL_CreateTextureFromSurface(r, logoTemp);
+    SDL_Rect logoRect = {0, 0, logoTemp->w, logoTemp->h};
+    SDL_FreeSurface(logoTemp);
 
     int showMenu = 1;
 
@@ -77,6 +83,8 @@ int main(int argc, char** argv) {
                         pthread_t thread_id;
                         pthread_create(&thread_id, NULL, thread, sys);
                         showMenu = 0;
+                        rects[0].y = 10;
+                        rects[0].w = 600;
                     }
                     break;
             }
@@ -91,9 +99,8 @@ int main(int argc, char** argv) {
         SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
         SDL_RenderClear(r);
 
-        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
-
         if(showMenu) {
+            SDL_RenderCopy(r, logo, NULL, &logoRect);
             for(int i = 0; i < s; i++) {
                 char* txt = malloc(sizeof(char)*200);
                 sprintf(txt, "Server: %s Online: %d Idle: %d", datas[i].server, datas[i].online_players, datas[i].idle_players);
